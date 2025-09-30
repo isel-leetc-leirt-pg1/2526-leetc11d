@@ -16,7 +16,7 @@
 #include <stdbool.h>
 
 int main() {
-    int last_n = -1, n;    // valores lidos, anterior e corrente
+    int last_n = -1, n;    // valores lidos, o anterior e o corrente
     bool equals=false;     // afetado a "true" no caso da ocorrência de elementos repetidos
     bool increasing=true;  // afetado a "false" caso se verifique impossibilidade de sequência crescente
     bool decreasing=true;  // afetado a "false" caso se verifique impossibilidade de sequência decrescente
