@@ -45,7 +45,21 @@ int main() {
     }
    
     // mostrar os resultados
-
+    if (total < 2) {
+        printf("sequência inferior a dois elementos\n");
+    }
+    else if (increasing) {
+        printf("sequência ordenada estritamente por ordem crescente\n");
+    }
+    else if (decreasing) {
+        printf("sequência ordenada estritamente por ordem decrescente\n");
+    }
+    else if (equals) {
+        printf("sequência com elementos repetidos consecutivos\n");
+    }
+    else {
+        printf("sequência não ordenada\n");
+    }
     return 0;
 
 }
