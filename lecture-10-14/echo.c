@@ -19,9 +19,10 @@ int main() {
         putchar(car);
 
     }
-    while (car != '\n');
+    while (car != -1);
     // to complete
   
+    printf("programa terminado!\n");
     return 0;
     
 }
