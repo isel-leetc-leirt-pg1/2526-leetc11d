@@ -5,6 +5,8 @@
 #include <ctype.h>
 
 #define NLETTERS ('Z' - 'A' + 1)
+
+// dimensão da barra para a máxima ocorrência
 #define MAX_COLUMN 60
 
 typedef int histogram_t[NLETTERS];
@@ -21,17 +23,29 @@ void histo_collect(histogram_t histo) {
     }
 }
 
+/**
+ * Mostrar simplesmente o núemro de ocorrências para cada letra,
+ * por ordem alfabética
+ */
 void histo_show1(histogram_t histo) {
     for(int i=0; i < NLETTERS; ++i) {
         printf("%c: %4d\n", 'A' + i, histo[i]);     
     }
 }
 
+
+/**
+ * Mostrar, para cada letra, por ordem alfabética, o número de ocorrências da letra e uma
+ * barra horizontal proporcional ao número de ocorrências
+ */
 void histo_show2(histogram_t histo) {
     // TODO
 }
 
-
+/**
+ * Mostrar, para cada letra, por ordem de ocorrências, o número de ocorrências da letra e uma
+ * barra horizontal proporcional ao número de ocorrências
+ */
 void histo_show3(histogram_t histo) {
      // TODO
 }
