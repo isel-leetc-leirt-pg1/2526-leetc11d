@@ -7,7 +7,7 @@
 #define NLETTERS ('Z' - 'A' + 1)
 
 // dimensão da barra para a máxima ocorrência
-#define MAX_COLUMN 60
+#define MAX_BAR 60
 
 typedef int histogram_t[NLETTERS];
 
