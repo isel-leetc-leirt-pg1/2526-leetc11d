@@ -39,7 +39,7 @@ bool screen_coords_to_board(int sx, int sy, int *bline, int *bcol) {
     if (sx >= board_x && sx < board_x + BOARD_SIDE &&
          sy >= board_y && sy < board_y + BOARD_SIDE) {
         *bcol = (sx - board_x) / CELL_SIDE;
-        *bline = (sy - board_y)/CELL_SIDE;
+        *bline = 7 - (sy - board_y)/CELL_SIDE;
         return true;
 
     }
@@ -56,6 +56,13 @@ void mouse_handler(MouseEvent me) {
 
     if (me.type == MOUSE_BUTTON_EVENT && me.state == BUTTON_PRESSED &&
          me.button == BUTTON_LEFT) {
+        int row, col;
+   
+        if (screen_coords_to_board(me.x, me.y, &row, &col)) {
+            char coords[] = { 'A' + col, ':', '1' + row, 0};
+
+            mv_show_text(&show_coords, coords, ALIGN_CENTER);
+        }
 
     }
 }
@@ -121,6 +128,8 @@ int main() {
     graph_init2("Checkers", WINDOW_WIDTH, WINDOW_HEIGHT);
     init_components();
     draw_board();
+
+    graph_regist_mouse_handler(mouse_handler);
     graph_start();
 }
 
