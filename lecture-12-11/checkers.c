@@ -38,6 +38,9 @@
 #define WHITE_PIECE_CLR c_white
 #define BLACK_PIECE_CLR c_gray
 
+#define WHITE_PIECE_CLR_ALT graph_rgb(240, 240, 200)
+#define BLACK_PIECE_CLR_ALT graph_rgb(164, 128, 64)
+
 // divisão entre informações de jogo e tabuleiro
 #define FRAME_CLR c_black
 #define SEP_HEIGHT 10
@@ -48,11 +51,24 @@
 #define SHOW_COORDS_Y 30
 #define SHOW_COORDS_X 100
 
+#define BT_CHG_X    600
+#define BT_CHG_Y    30
+
+#define CT_CHANGES_X 300
+#define CT_CHANGES_Y 30
 
 // variáveis globais
 
-int board_x, board_y;
+// componentes de interação
 MsgView show_coords;
+Button bt_chg_clrs;
+Counter ct_clr_changes;
+
+
+int clr_changes_count;
+int board_x, board_y;
+int black_piece_clr, white_piece_clr;
+
 board_t board; // tabuleiro do jogo
 
 
@@ -99,7 +115,7 @@ void cell_draw(cell_t *cell) {
     if (cell->piece != NO_PIECE) {
         RGB piece_color;
         piece_color = 
-          (cell->piece == BLACK_PIECE) ?BLACK_PIECE_CLR : WHITE_PIECE_CLR;
+          (cell->piece == BLACK_PIECE) ? black_piece_clr : white_piece_clr;
         
         graph_circle(sx + CELL_SIDE/2, sy + CELL_SIDE/2, CELL_SIDE/3,
            piece_color, true);
@@ -112,28 +128,30 @@ void cell_draw(cell_t *cell) {
  * Constrói e apresenta os componentes de informação sobre o jogo
  */
 void init_components() {
+    // message view
     mv_create(&show_coords,SHOW_COORDS_X, SHOW_COORDS_Y,6, LARGE_FONT, c_orange, c_dgray); 
-
     mv_show_text(&show_coords, "   ", ALIGN_CENTER);
+
+    // button
+    bt_create(&bt_chg_clrs, BT_CHG_X, BT_CHG_Y, "Change Colors", c_orange);
+    bt_draw(&bt_chg_clrs, BUTTON_RELEASED);
+    // counter
+    ct_create(&ct_clr_changes, CT_CHANGES_X, CT_CHANGES_Y, 0, "Changes Count", MEDIUM_FONT);
+    ct_show(&ct_clr_changes);
 }
 
-
-/**
- * Função que trata dos eventos de rato
- */
-void mouse_handler(MouseEvent me) {
-
-    if (me.type == MOUSE_BUTTON_EVENT && me.state == BUTTON_PRESSED &&
-         me.button == BUTTON_LEFT) {
-        
-        int row, col;
-        if (screen_coords_to_board(me.x, me.y, &row, &col)) {
-            char coords[] = { 'A' + col, ':' , '1' + row, 0 };
-            mv_show_text(&show_coords, coords, ALIGN_CENTER);
-        }
-
+void change_colors() {
+    if (black_piece_clr == BLACK_PIECE_CLR) {
+        black_piece_clr = BLACK_PIECE_CLR_ALT;
+        white_piece_clr = WHITE_PIECE_CLR_ALT;
+    }
+    else {
+        black_piece_clr = BLACK_PIECE_CLR;
+        white_piece_clr = WHITE_PIECE_CLR;
     }
 }
+
+
 
 /**
  * Versão preliminar do desendo do tabuleiro
@@ -233,8 +251,53 @@ void draw_board() {
     }
 }
 
+void init_state() {
+    black_piece_clr = BLACK_PIECE_CLR;
+    white_piece_clr = WHITE_PIECE_CLR;
+}
+
+bool process_components(int x, int y, int state) {
+    if (bt_selected(&bt_chg_clrs, x, y)) {
+        bt_draw(&bt_chg_clrs, state);
+        if (state == BUTTON_RELEASED) {
+            change_colors();
+            draw_board();
+            ct_inc(&ct_clr_changes);
+            ct_show(&ct_clr_changes);
+            clr_changes_count++;
+        }
+        return true;
+    }
+    return false;
+}
+
+
+/**
+ * Função que trata dos eventos de rato
+ */
+void mouse_handler(MouseEvent me) {
+
+    if (me.type == MOUSE_BUTTON_EVENT  &&
+         me.button == BUTTON_LEFT) {
+        if (process_components(me.x, me.y, me.state)) {
+            return;
+        }
+
+        if (me.state == BUTTON_PRESSED) {
+            int row, col;
+            if (screen_coords_to_board(me.x, me.y, &row, &col)) {
+                char coords[] = { 'A' + col, ':' , '1' + row, 0 };
+                mv_show_text(&show_coords, coords, ALIGN_CENTER);
+            }
+        }
+
+    }
+}
+
 int main() {
     graph_init2("Checkers", WINDOW_WIDTH, WINDOW_HEIGHT);
+    init_state();
+
     init_components();
 
     board_init(&board);
